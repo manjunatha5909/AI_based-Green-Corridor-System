@@ -1,0 +1,496 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* =========================
+   GLOBAL
+========================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    scroll-behavior:smooth;
+}
+
+body{
+
+    font-family:'Inter', sans-serif;
+    background:#111827;
+    color:#f6f1e9;
+    overflow-x:hidden;
+    letter-spacing:0.01em;
+    line-height:1.7;
+
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family:'Times New Roman', Times, serif;
+}
+
+.font-calligraphy {
+    font-family:'Times New Roman', Times, serif;
+}
+
+/* Scrollbar */
+
+::-webkit-scrollbar{
+    width:8px;
+}
+
+::-webkit-scrollbar-track{
+    background:#08111F;
+}
+
+::-webkit-scrollbar-thumb{
+    background:#00E5FF;
+    border-radius:20px;
+}
+
+/* =========================
+ Animated Gradient
+========================= */
+
+.gradient{
+
+    min-height:100vh;
+
+    background:
+      linear-gradient(180deg, rgba(17,24,39,0.15), rgba(17,24,39,0.15)),
+      url("https://images.unsplash.com/photo-1484348521801-37ddc18a83b3?auto=format&fit=crop&w=2000&q=80") center/cover no-repeat;
+
+    background-blend-mode: multiply;
+    background-size: cover;
+    position:relative;
+    overflow:hidden;
+
+}
+
+@keyframes gradientMove{
+
+0%{
+background-position:0% 50%;
+}
+
+50%{
+background-position:100% 50%;
+}
+
+100%{
+background-position:0% 50%;
+}
+
+}
+
+/* =========================
+ Moving Grid
+========================= */
+
+.grid-bg{
+
+position:absolute;
+
+width:100%;
+height:100%;
+
+background-image:
+
+linear-gradient(rgba(245,158,11,.08) 1px,transparent 1px),
+
+linear-gradient(90deg,rgba(245,158,11,.08) 1px,transparent 1px);
+
+background-size:60px 60px;
+
+animation:gridMove 8s linear infinite;
+
+}
+
+@keyframes gridMove{
+
+0%{
+
+transform:translateY(0px);
+
+}
+
+100%{
+
+transform:translateY(60px);
+
+}
+
+}
+
+/* =========================
+ Architectural Skyline
+========================= */
+
+.city{
+
+position:absolute;
+
+bottom:0;
+
+width:100%;
+
+height:260px;
+
+background:url("https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=2000&q=80")
+center center/cover no-repeat;
+
+opacity:.18;
+
+filter:brightness(.65) saturate(0.8);
+
+}
+
+/* =========================
+ Radar
+========================= */
+
+.radar{
+
+position:absolute;
+
+width:700px;
+
+height:700px;
+
+left:50%;
+
+top:50%;
+
+transform:translate(-50%,-50%);
+
+border-radius:50%;
+
+border:2px solid rgba(245,158,11,.08);
+
+animation:rotateRadar 12s linear infinite;
+
+}
+
+.radar::before{
+
+content:"";
+
+position:absolute;
+
+left:50%;
+
+top:50%;
+
+width:50%;
+
+height:3px;
+
+background:linear-gradient(to right,rgba(255,193,7,0.85),transparent);
+
+transform-origin:left;
+
+box-shadow:0 0 24px rgba(255,193,7,0.5);
+
+}
+
+@keyframes rotateRadar{
+
+100%{
+
+transform:translate(-50%,-50%) rotate(360deg);
+
+}
+
+}
+
+/* =========================
+ Floating Particles
+========================= */
+
+.particle{
+
+position:absolute;
+
+border-radius:50%;
+
+background:#F59E0B;
+
+filter:blur(8px);
+
+animation:float 10s infinite ease-in-out;
+
+}
+
+.p1{
+
+width:18px;
+height:18px;
+
+left:12%;
+top:20%;
+
+}
+
+.p2{
+
+width:12px;
+height:12px;
+
+left:80%;
+top:35%;
+
+animation-delay:2s;
+
+}
+
+.p3{
+
+width:16px;
+height:16px;
+
+left:30%;
+top:75%;
+
+animation-delay:4s;
+
+}
+
+.p4{
+
+width:22px;
+height:22px;
+
+left:70%;
+top:80%;
+
+animation-delay:6s;
+
+}
+
+.p5{
+
+width:14px;
+height:14px;
+
+left:50%;
+top:15%;
+
+animation-delay:1s;
+
+}
+
+@keyframes float{
+
+0%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-45px);
+
+}
+
+100%{
+
+transform:translateY(0);
+
+}
+
+}
+
+/* =========================
+ Glassmorphism
+========================= */
+
+.glass{
+  background:rgba(15,23,42,0.75);
+  backdrop-filter:blur(24px);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:24px;
+  box-shadow:0 24px 80px rgba(0,0,0,0.35);
+}
+
+.dashboard-bg {
+  min-height:100vh;
+  background: radial-gradient(circle at top left, rgba(56,189,248,0.15), transparent 18%),
+              radial-gradient(circle at bottom right, rgba(16,185,129,0.16), transparent 20%),
+              linear-gradient(180deg, #020617 0%, #070f1f 100%);
+}
+
+/* =========================
+ Glow Text
+========================= */
+
+.glow{
+
+text-shadow:
+
+0 0 10px #F59E0B,
+
+0 0 20px #F59E0B,
+
+0 0 40px #F59E0B,
+
+0 0 80px #F59E0B;
+
+}
+
+/* =========================
+ Button
+========================= */
+
+.\33 d-box {
+  transform: perspective(500px) translateZ(0);
+  box-shadow: 0 18px 30px rgba(15, 23, 42, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.\33 d-box:hover {
+  transform: perspective(500px) translateZ(4px) translateY(-2px);
+  box-shadow: 0 24px 40px rgba(15, 23, 42, 0.65), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+
+.btn{
+  padding:14px 26px;
+  background:linear-gradient(135deg,#22c55e,#38bdf8);
+  border-radius:999px;
+  font-weight:700;
+  transition:.3s ease;
+  color:#ffffff;
+  cursor:pointer;
+  border:none;
+  box-shadow:0 16px 40px rgba(56,189,248,0.22);
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 24px 50px rgba(56,189,248,0.3);
+}
+
+.btn.secondary{
+  background:rgba(255,255,255,0.08);
+  color:#ffffff;
+  border:1px solid rgba(255,255,255,0.12);
+  box-shadow:0 18px 40px rgba(0,0,0,0.18);
+}
+
+.btn.secondary:hover{
+  transform:translateY(-2px);
+  background:rgba(255,255,255,0.12);
+}
+
+/* =========================
+ Stats Cards
+========================= */
+
+.stat-card{
+  width:230px;
+  padding:24px;
+  border-radius:24px;
+  background:linear-gradient(180deg, rgba(15,23,42,0.95), rgba(15,23,42,0.65));
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,.12);
+  transition:.3s ease;
+  box-shadow:0 18px 45px rgba(0,0,0,0.24);
+}
+
+.stat-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 24px 50px rgba(14,165,233,0.22);
+}
+
+/* =========================
+ Fade Animation
+========================= */
+
+.fade{
+
+animation:fadeUp 1.2s ease;
+
+}
+
+@keyframes fadeUp{
+
+0%{
+
+opacity:0;
+
+transform:translateY(60px);
+
+}
+
+100%{
+
+opacity:1;
+
+transform:translateY(0);
+
+}
+
+}
+
+/* =========================
+ Responsive
+========================= */
+
+@media(max-width:900px){
+
+.stat-card{
+
+width:100%;
+
+}
+
+.radar{
+
+width:400px;
+height:400px;
+
+}
+
+.city{
+
+height:180px;
+
+}
+.stats-card{
+    transition:0.4s;
+}
+
+.stats-card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 0 30px rgba(0,229,255,.4);
+}
+.command-grid{
+
+background-image:
+linear-gradient(rgba(0,229,255,.08) 1px,transparent 1px),
+linear-gradient(90deg,rgba(0,229,255,.08) 1px,transparent 1px);
+
+background-size:40px 40px;
+
+animation:gridMove 5s linear infinite;
+
+}
+
+.route-path{
+
+stroke-dasharray:18;
+
+animation:routeFlow 1s linear infinite;
+
+filter:drop-shadow(0 0 10px cyan);
+
+}
+
+@keyframes routeFlow{
+
+to{
+
+stroke-dashoffset:-36;
+
+}
+
+}
+}
