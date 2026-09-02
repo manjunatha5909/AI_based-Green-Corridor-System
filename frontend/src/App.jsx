@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
+import LiveGpsSection from "./components/LiveGpsSection";
 import HowItWorksSection from "./components/HowItWorksSection";
 import FeaturesSection from "./components/FeaturesSection";
 import AboutSection from "./components/AboutSection";
@@ -14,8 +15,9 @@ import { useAccessibility } from "./context/useAccessibility";
 function App() {
   const [activeTab, setActiveTab] = useState("home"); // Default to Overview
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
-  const { setHighContrast, setSoundEnabled, setVoiceAlerts, playBeep } = useAccessibility();
+  const { setHighContrast, setSoundEnabled, setVoiceAlerts, playBeep, theme, toggleTheme } = useAccessibility();
 
+  const liveGpsRef = useRef(null);
   const howItWorksRef = useRef(null);
   const featuresRef = useRef(null);
   const aboutRef = useRef(null);
@@ -26,6 +28,7 @@ function App() {
     playBeep("click");
 
     const refMap = {
+      gps: liveGpsRef,
       "how-it-works": howItWorksRef,
       features: featuresRef,
       about: aboutRef,
@@ -47,7 +50,10 @@ function App() {
         return;
       }
 
-      if (e.altKey && (e.key === "c" || e.key === "C")) {
+      if (e.altKey && (e.key === "t" || e.key === "T")) {
+        e.preventDefault();
+        toggleTheme();
+      } else if (e.altKey && (e.key === "c" || e.key === "C")) {
         e.preventDefault();
         setIsConsoleOpen((prev) => !prev);
       } else if (e.altKey && (e.key === "h" || e.key === "H")) {
@@ -74,7 +80,7 @@ function App() {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [setHighContrast, setSoundEnabled, setVoiceAlerts, handleTabChange]);
+  }, [setHighContrast, setSoundEnabled, setVoiceAlerts, handleTabChange, toggleTheme]);
 
   const handleOpenConsole = () => {
     setIsConsoleOpen(true);
@@ -82,7 +88,11 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#070A0F] text-slate-100 flex flex-col selection:bg-emerald-500 selection:text-black">
+    <div
+      className={`min-h-screen ${
+        theme === "dark" ? "bg-[#070A0F] text-slate-100" : "bg-[#F8FAFC] text-slate-900"
+      } flex flex-col selection:bg-emerald-500 selection:text-white transition-colors duration-300`}
+    >
       {/* Navigation Bar */}
       <Navbar
         activeTab={activeTab}
@@ -102,6 +112,10 @@ function App() {
               onCreateCorridor={handleOpenConsole}
               onOpenCommandHub={() => handleTabChange("command")}
             />
+
+            <div ref={liveGpsRef} id="live-gps">
+              <LiveGpsSection onOpenCommandHub={() => handleTabChange("command")} />
+            </div>
 
             <div ref={howItWorksRef} id="how-it-works">
               <HowItWorksSection onCreateCorridor={handleOpenConsole} />

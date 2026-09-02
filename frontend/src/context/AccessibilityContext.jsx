@@ -28,6 +28,26 @@ export function AccessibilityProvider({ children }) {
   const [announcement, setAnnouncement] = useState({ text: "", priority: "polite" });
   const audioCtxRef = useRef(null);
 
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem("agc_theme") || "light"; // "light" | "dark"
+  });
+
+  const toggleTheme = useCallback(() => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("agc_theme", theme);
+    document.documentElement.setAttribute("data-theme", theme);
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+    } else {
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
+    }
+  }, [theme]);
+
   // Sync to localStorage and body classes
   useEffect(() => {
     localStorage.setItem("agc_high_contrast", highContrast);
@@ -169,6 +189,9 @@ export function AccessibilityProvider({ children }) {
         setSoundEnabled,
         voiceAlerts,
         setVoiceAlerts,
+        theme,
+        setTheme,
+        toggleTheme,
         announce,
         playBeep,
         speak,

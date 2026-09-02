@@ -1,8 +1,57 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root, html.light {
   --font-outfit: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-inter: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Aesthetic Clean Light Theme Tokens */
+  --radius: 0.75rem;
+  --background: 210 40% 98%;          /* #F8FAFC Studio Slate */
+  --foreground: 222 47% 11%;         /* #0F172A Deep Charcoal */
+  --card: 0 0% 100%;                 /* #FFFFFF Pure White */
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 160 84% 39%;            /* #10B981 Emerald-500 */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 40% 96%;          /* #F1F5F9 Slate-100 */
+  --secondary-foreground: 222 47% 11%;
+  --muted: 210 40% 96%;              /* #F1F5F9 */
+  --muted-foreground: 215 16% 47%;    /* #64748B Slate-500 */
+  --accent: 160 84% 95%;             /* Light emerald tint */
+  --accent-foreground: 160 84% 30%;
+  --destructive: 0 84% 60%;          /* Red-500 */
+  --destructive-foreground: 0 0% 100%;
+  --border: 214 32% 91%;             /* #E2E8F0 Slate-200 */
+  --input: 214 32% 91%;
+  --ring: 160 84% 39%;               /* Emerald focus ring */
+}
+
+html.dark {
+  /* Futuristic Dark Theme Tokens */
+  --radius: 0.75rem;
+  --background: 222 47% 5%;          /* #070A0F Deep Void */
+  --foreground: 210 40% 98%;         /* #F8FAFC Crisp Slate */
+  --card: 222 47% 8%;                /* #0B0F19 Card Background */
+  --card-foreground: 210 40% 98%;
+  --popover: 222 47% 8%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 160 84% 39%;            /* #10B981 */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 222 47% 12%;          /* #131A29 */
+  --secondary-foreground: 210 40% 98%;
+  --muted: 222 47% 12%;
+  --muted-foreground: 215 20% 65%;   /* #94A3B8 */
+  --accent: 160 84% 15%;
+  --accent-foreground: 160 84% 65%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 217 33% 18%;             /* rgba(255,255,255,0.1) */
+  --input: 217 33% 18%;
+  --ring: 160 84% 39%;
 }
 
 html {
@@ -20,14 +69,26 @@ html[data-font-size="xlarge"] {
 
 body {
   font-family: var(--font-inter);
-  background-color: #070A0F;
-  color: #F1F5F9;
+  background-color: #F8FAFC;
+  color: #0F172A;
   overflow-x: hidden;
   line-height: 1.6;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+html.dark body {
+  background-color: #070A0F;
+  color: #F8FAFC;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-outfit);
+  color: #0F172A;
+  transition: color 0.25s ease;
+}
+
+html.dark h1, html.dark h2, html.dark h3, html.dark h4, html.dark h5, html.dark h6 {
+  color: #FFFFFF;
 }
 
 /* High Contrast Accessible Mode */
@@ -52,8 +113,8 @@ html.high-contrast button {
 }
 
 html.high-contrast .text-slate-400,
-html.high-contrast .text-slate-300,
-html.high-contrast .text-gray-400 {
+html.high-contrast .text-slate-500,
+html.high-contrast .text-slate-600 {
   color: #E2E8F0 !important;
 }
 
@@ -74,126 +135,250 @@ html.reduce-motion *::after {
   scroll-behavior: auto !important;
 }
 
-/* Glassmorphism Styles */
+/* Aesthetic Clean Light Glassmorphism Styles */
 .glass-nav {
-  background: rgba(7, 10, 15, 0.88);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
 }
 
 .glass-card {
-  background: rgba(13, 19, 31, 0.82);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 10px 30px -4px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.glass-card:hover {
+  box-shadow: 0 18px 40px -4px rgba(15, 23, 42, 0.1), 0 0 25px rgba(16, 185, 129, 0.08);
 }
 
 .glass-stats-bar {
-  background: rgba(10, 15, 26, 0.88);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  box-shadow: 0 20px 45px -8px rgba(15, 23, 42, 0.09);
 }
 
 .glass-pill {
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.3);
   backdrop-filter: blur(8px);
 }
 
 .glass-button-secondary {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(241, 245, 249, 0.85);
+  border: 1px solid rgba(203, 213, 225, 0.85);
+  color: #0F172A;
   backdrop-filter: blur(10px);
   transition: all 0.25s ease;
 }
 
 .glass-button-secondary:hover {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(226, 232, 240, 0.95);
+  border-color: rgba(148, 163, 184, 0.9);
 }
 
-/* Emerald Buttons & Glows */
+/* Dark Mode Glass Overrides */
+html.dark .glass-nav {
+  background: rgba(7, 10, 15, 0.88);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.6);
+}
+
+html.dark .glass-card {
+  background: rgba(11, 15, 25, 0.85);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.5);
+}
+
+html.dark .glass-card:hover {
+  box-shadow: 0 18px 40px -4px rgba(0, 0, 0, 0.7), 0 0 25px rgba(16, 185, 129, 0.15);
+}
+
+html.dark .glass-stats-bar {
+  background: rgba(11, 15, 25, 0.92);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 45px -8px rgba(0, 0, 0, 0.7);
+}
+
+html.dark .glass-button-secondary {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #F1F5F9;
+}
+
+html.dark .glass-button-secondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+/* Aesthetic Emerald Buttons & Glows */
 .btn-emerald {
   background: linear-gradient(135deg, #10B981 0%, #059669 100%);
   color: #FFFFFF;
   font-weight: 600;
-  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.25);
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-emerald:hover {
-  background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
-  box-shadow: 0 6px 28px rgba(16, 185, 129, 0.55);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  box-shadow: 0 6px 24px rgba(16, 185, 129, 0.35);
   transform: translateY(-1px);
 }
 
 .emerald-gradient-text {
-  background: linear-gradient(135deg, #34D399 0%, #10B981 50%, #059669 100%);
+  background: linear-gradient(135deg, #059669 0%, #10B981 60%, #0284C7 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar (Light Studio Slate) */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #070A0F;
+  background: #F1F5F9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(148, 163, 184, 0.5);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(16, 185, 129, 0.5);
+  background: rgba(16, 185, 129, 0.6);
 }
 
 /* Signal Indicator Lights */
 .signal-light-green {
   background-color: #10B981;
-  box-shadow: 0 0 16px #10B981, 0 0 32px #10B981;
+  box-shadow: 0 0 12px #10B981, 0 0 24px #10B981;
 }
 
 .signal-light-red {
   background-color: #EF4444;
-  box-shadow: 0 0 16px #EF4444, 0 0 32px #EF4444;
+  box-shadow: 0 0 12px #EF4444, 0 0 24px #EF4444;
 }
 
-/* Leaflet Dark Customization */
+/* Leaflet Light Customization */
 .leaflet-container {
-  background: #0b1120 !important;
+  background: #f1f5f9 !important;
   font-family: inherit;
   z-index: 10;
   border-radius: 1rem;
 }
 
 .leaflet-popup-content-wrapper {
-  background: #0f172a !important;
-  color: #f8fafc !important;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #FFFFFF !important;
+  color: #0F172A !important;
+  border: 1px solid rgba(226, 232, 240, 0.95);
   border-radius: 0.75rem !important;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0 15px 35px -5px rgba(15, 23, 42, 0.12) !important;
 }
 
 .leaflet-popup-tip {
-  background: #0f172a !important;
+  background: #FFFFFF !important;
 }
 
 .leaflet-control-zoom a {
-  background-color: #1e293b !important;
-  color: #f8fafc !important;
-  border-color: #334155 !important;
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: #E2E8F0 !important;
 }
 
 .leaflet-control-zoom a:hover {
-  background-color: #334155 !important;
-  color: #34d399 !important;
+  background-color: #F8FAFC !important;
+  color: #059669 !important;
+}
+
+/* ── Interactive UI Enhancements ── */
+
+@keyframes emerald-glow-pulse {
+  0%, 100% { box-shadow: 0 0 10px rgba(16,185,129,0.15), 0 0 20px rgba(16,185,129,0.06); }
+  50% { box-shadow: 0 0 18px rgba(16,185,129,0.3), 0 0 35px rgba(16,185,129,0.1); }
+}
+
+.glow-pulse {
+  animation: emerald-glow-pulse 3s ease-in-out infinite;
+}
+
+/* Interactive select element */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px !important;
+}
+
+button, a, select, input {
+  transition-property: color, background-color, border-color, box-shadow, transform, opacity;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+:focus-visible {
+  outline: 2px solid rgba(16, 185, 129, 0.6);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.tab-active {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #065F46;
+}
+
+/* Progress bar shine */
+[data-radix-progress-indicator] {
+  background-image: linear-gradient(90deg, #10B981, #34D399, #10B981);
+  background-size: 200% 100%;
+  animation: progress-shine 2s linear infinite;
+}
+
+@keyframes progress-shine {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+
+/* Custom Junction Tooltips */
+.custom-junction-tooltip {
+  background: rgba(15, 23, 42, 0.92) !important;
+  border: 1px solid rgba(16, 185, 129, 0.5) !important;
+  color: #FFFFFF !important;
+  font-family: var(--font-inter), sans-serif !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  border-radius: 8px !important;
+  padding: 3px 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  white-space: nowrap !important;
+}
+
+.custom-junction-tooltip:before {
+  border-top-color: rgba(15, 23, 42, 0.92) !important;
+}
+
+html.dark .custom-junction-tooltip {
+  background: rgba(4, 7, 13, 0.95) !important;
+  border-color: rgba(16, 185, 129, 0.7) !important;
 }

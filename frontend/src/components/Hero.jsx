@@ -1,143 +1,213 @@
 import { HiArrowRight } from "react-icons/hi2";
-import { Cpu, Ambulance, Zap, TrafficCone, Activity } from "lucide-react";
+import { Cpu, Zap, Activity, ShieldCheck, Navigation2, Radio } from "lucide-react";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { AnimatedCounter } from "@/components/ui/animated-counter";
+
+const STATIC_PARTICLES = [
+  { key: 0, style: { width: "6px", height: "6px", left: "12%", top: "25%" }, duration: 5.2, delay: 0.2 },
+  { key: 1, style: { width: "4px", height: "4px", left: "28%", top: "45%" }, duration: 6.8, delay: 1.1 },
+  { key: 2, style: { width: "8px", height: "8px", left: "42%", top: "30%" }, duration: 4.5, delay: 2.3 },
+  { key: 3, style: { width: "5px", height: "5px", left: "65%", top: "60%" }, duration: 7.1, delay: 0.5 },
+  { key: 4, style: { width: "7px", height: "7px", left: "80%", top: "35%" }, duration: 5.9, delay: 1.8 },
+  { key: 5, style: { width: "4px", height: "4px", left: "18%", top: "70%" }, duration: 6.3, delay: 2.6 },
+  { key: 6, style: { width: "9px", height: "9px", left: "50%", top: "80%" }, duration: 4.8, delay: 0.9 },
+  { key: 7, style: { width: "5px", height: "5px", left: "72%", top: "20%" }, duration: 6.0, delay: 1.4 },
+  { key: 8, style: { width: "6px", height: "6px", left: "88%", top: "55%" }, duration: 5.5, delay: 2.0 },
+  { key: 9, style: { width: "4px", height: "4px", left: "35%", top: "65%" }, duration: 7.4, delay: 0.7 },
+  { key: 10, style: { width: "7px", height: "7px", left: "5%", top: "40%" }, duration: 5.1, delay: 1.6 },
+  { key: 11, style: { width: "5px", height: "5px", left: "92%", top: "75%" }, duration: 6.6, delay: 2.2 },
+];
+
+/* Floating particle dot */
+function Particle({ style, duration, delay }) {
+  return (
+    <motion.div
+      className="absolute rounded-full bg-emerald-500/20 pointer-events-none"
+      style={style}
+      animate={{ y: [0, -35, 0], opacity: [0.3, 0.7, 0.3] }}
+      transition={{ duration, repeat: Infinity, ease: "easeInOut", delay }}
+    />
+  );
+}
 
 function Hero({ onCreateCorridor, onOpenCommandHub }) {
   const features = [
-    {
-      icon: Cpu,
-      title: "AI Graph Routing",
-      subtitle: "OpenStreetMap Dijkstra",
-    },
-    {
-      icon: Ambulance,
-      title: "Real-time Telemetry",
-      subtitle: "Live Vehicle Tracking",
-    },
-    {
-      icon: Zap,
-      title: "Zero Delay Arrival",
-      subtitle: "Golden Hour Saved",
-    },
-    {
-      icon: TrafficCone,
-      title: "Smart Green Wave",
-      subtitle: "Automated Clearance",
-    },
+    { icon: Cpu, title: "AI Graph Routing", subtitle: "OSRM & Dijkstra" },
+    { icon: Navigation2, title: "Live Telemetry", subtitle: "Real-time Heading" },
+    { icon: Zap, title: "Zero-Delay Wave", subtitle: "Golden Hour Saved" },
+    { icon: ShieldCheck, title: "Smart Clearance", subtitle: "Auto Signal Sync" },
   ];
 
   const stats = [
-    { value: "2,534+", label: "Emergencies Dispatched" },
-    { value: "1,245 km", label: "Green Corridors Created" },
-    { value: "98.7%", label: "Intersections Cleared" },
-    { value: "12,450+", label: "Lives Protected" },
-    { value: "< 1 min", label: "Signal Override Latency" },
+    { value: 2534, suffix: "+", label: "Dispatched" },
+    { value: 1245, suffix: " km", label: "Corridors Created" },
+    { value: 98, suffix: "%", label: "Junctions Cleared" },
+    { value: 12450, suffix: "+", label: "Lives Protected" },
+    { value: 1, prefix: "< ", suffix: " min", label: "Override Latency" },
   ];
 
   return (
     <section
       aria-labelledby="hero-title"
-      className="relative min-h-[90vh] w-full flex flex-col justify-between pt-28 lg:pt-36 pb-12 px-4 sm:px-8 lg:px-12 overflow-hidden bg-[#070A0F]"
+      className="relative min-h-screen w-full flex flex-col justify-between overflow-hidden bg-[#F8FAFC] dark:bg-[#070A0F] transition-colors duration-300"
     >
-      {/* Background Hero Image & Gradients */}
+      {/* ── Animated Background Layers ── */}
       <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
-        <img
-          src="/hero-bg.jpg"
-          alt=""
-          className="w-full h-full object-cover object-center opacity-60 scale-105 filter brightness-90 contrast-110"
+        {/* Ambient Mesh Glows */}
+        <div className="absolute top-10 left-1/4 w-[500px] h-[500px] bg-emerald-400/10 dark:bg-emerald-500/15 rounded-full blur-[140px]" />
+        <div className="absolute bottom-10 right-1/4 w-[400px] h-[400px] bg-sky-400/10 dark:bg-sky-500/15 rounded-full blur-[130px]" />
+        <div className="absolute top-1/2 right-10 w-[350px] h-[350px] bg-teal-300/10 dark:bg-teal-500/10 rounded-full blur-[120px]" />
+
+        {/* Subtle Architectural Grid */}
+        <div
+          className="absolute inset-0 opacity-[0.035] dark:opacity-[0.04]"
+          style={{
+            backgroundImage: "linear-gradient(rgba(15,23,42,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,0.6) 1px, transparent 1px)",
+            backgroundSize: "48px 48px",
+          }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#070A0F] via-[#070A0F]/85 to-transparent w-full md:w-3/4 lg:w-2/3" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#070A0F] via-transparent to-[#070A0F]/70" />
+
+        {/* Floating Particles */}
+        {STATIC_PARTICLES.map((p) => <Particle key={p.key} style={p.style} duration={p.duration} delay={p.delay} />)}
       </div>
 
-      {/* Main Content */}
-      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center my-auto">
-        <div className="lg:col-span-8 flex flex-col items-start space-y-6 sm:space-y-8">
-          {/* Top Pill */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-pill text-emerald-400 text-xs sm:text-sm font-semibold tracking-wider uppercase border border-emerald-500/30">
-            <Cpu className="w-4 h-4 text-emerald-400 animate-pulse" aria-hidden="true" />
-            <span>AI BASED EMERGENCY RESPONSE SYSTEM</span>
-          </div>
+      {/* ── Main Content ── */}
+      <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-8 lg:px-12 pt-28 sm:pt-32 pb-8 flex flex-col justify-between flex-1">
+        <div className="max-w-3xl">
 
-          {/* Heading */}
-          <div className="space-y-1 font-['Outfit']">
-            <h1 id="hero-title" className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-none">
+          {/* Live Status Pill */}
+          <motion.div
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="flex items-center gap-3 mb-6"
+          >
+            <Badge variant="emerald" className="px-4 py-1.5 text-xs rounded-full gap-2 shadow-xs">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 animate-ping" />
+              SYSTEM LIVE · AI BASED EMERGENCY RESPONSE
+            </Badge>
+            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/80 dark:bg-slate-900/80 border border-slate-200 dark:border-white/10 text-[11px] font-semibold text-slate-600 dark:text-slate-300 shadow-xs">
+              <Radio className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+              Bengaluru, India
+            </div>
+          </motion.div>
+
+          {/* 3-Line Heading */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="space-y-1 mb-6"
+          >
+            <h1
+              id="hero-title"
+              className="text-5xl sm:text-7xl lg:text-8xl font-black text-slate-900 dark:text-white tracking-tight leading-none font-['Outfit']"
+            >
               AI Based
             </h1>
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black emerald-gradient-text tracking-tight leading-none drop-shadow-[0_0_25px_rgba(16,185,129,0.3)]">
+            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black tracking-tight leading-none font-['Outfit'] emerald-gradient-text">
               Green Corridor
             </h1>
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white tracking-tight leading-none">
+            <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black text-slate-900 dark:text-white tracking-tight leading-none font-['Outfit']">
               System
             </h1>
-          </div>
+          </motion.div>
 
-          {/* Subtitle */}
-          <p className="text-slate-300 text-base sm:text-lg max-w-xl font-normal leading-relaxed">
-            Intelligent urban traffic management system that synchronizes city traffic signals to create an unobstructed virtual green corridor for emergency vehicles.
-          </p>
+          {/* Sub-description */}
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-slate-600 dark:text-slate-300 text-base sm:text-lg max-w-xl leading-relaxed mb-8 font-normal"
+          >
+            Intelligent traffic orchestration that synchronizes city signals along real road graphs to create an unobstructed virtual corridor for emergency vehicles — saving lives in the golden hour.
+          </motion.p>
 
-          {/* 4 Feature Highlights */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 w-full max-w-2xl py-2">
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex flex-wrap items-center gap-3 mb-10"
+          >
+            <Button
+              variant="emerald"
+              size="xl"
+              onClick={onCreateCorridor}
+              className="rounded-full px-8 group shadow-md hover:shadow-lg"
+            >
+              <Zap className="w-5 h-5" />
+              Launch Rapid Green Wave
+              <HiArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform duration-300" aria-hidden="true" />
+            </Button>
+
+            <Button
+              variant="glass"
+              size="xl"
+              onClick={onOpenCommandHub}
+              className="rounded-full px-7 shadow-xs border-slate-200 dark:border-white/15 bg-white/90 dark:bg-slate-900/80 text-slate-800 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-800"
+            >
+              <Activity className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+              Live Operations Hub
+            </Button>
+          </motion.div>
+
+          {/* Feature Pills */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex flex-wrap gap-2.5"
+          >
             {features.map((item, idx) => {
               const IconComp = item.icon;
               return (
-                <div key={idx} className="flex flex-col items-start gap-1.5 group">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 group-hover:border-emerald-400 group-hover:bg-emerald-500/20 transition-all duration-300">
-                    <IconComp className="w-5 h-5" aria-hidden="true" />
-                  </div>
-                  <div>
-                    <h2 className="text-sm font-bold text-white group-hover:text-emerald-300 transition-colors">
-                      {item.title}
-                    </h2>
-                    <p className="text-xs text-slate-400 font-medium">{item.subtitle}</p>
-                  </div>
-                </div>
+                <motion.div
+                  key={idx}
+                  whileHover={{ scale: 1.03, y: -2 }}
+                  className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-white/90 dark:bg-slate-900/80 border border-slate-200 dark:border-white/10 shadow-xs hover:border-emerald-300 dark:hover:border-emerald-500/40 hover:bg-emerald-50/40 dark:hover:bg-emerald-500/10 transition-all duration-200 cursor-default"
+                >
+                  <IconComp className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span className="text-xs font-bold text-slate-800 dark:text-white">{item.title}</span>
+                  <Separator orientation="vertical" className="h-3 bg-slate-200 dark:bg-white/15" />
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">{item.subtitle}</span>
+                </motion.div>
               );
             })}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-wrap items-center gap-4 sm:gap-6 pt-2">
-            <button
-              onClick={onCreateCorridor}
-              className="btn-emerald px-7 py-3.5 rounded-full text-sm font-bold tracking-wide flex items-center gap-2 group cursor-pointer shadow-xl focus-visible:ring-2 focus-visible:ring-white"
-            >
-              <span>Launch Rapid Way</span>
-              <HiArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" aria-hidden="true" />
-            </button>
-
-            <button
-              onClick={onOpenCommandHub}
-              className="glass-button-secondary px-7 py-3.5 rounded-full text-sm font-semibold text-white tracking-wide flex items-center gap-2 group cursor-pointer focus-visible:ring-2 focus-visible:ring-emerald-400"
-            >
-              <Activity className="w-4 h-4 text-emerald-400" aria-hidden="true" />
-              <span>Live Operations Hub</span>
-            </button>
-          </div>
+          </motion.div>
         </div>
-      </div>
 
-      {/* Floating Bottom Stats Bar */}
-      <div className="relative z-10 max-w-7xl mx-auto w-full mt-10">
-        <div className="glass-stats-bar rounded-2xl p-6 sm:p-8">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-4 divide-y md:divide-y-0 md:divide-x divide-white/10">
-            {stats.map((stat, index) => (
-              <div
-                key={index}
-                className={`flex flex-col items-center text-center ${
-                  index !== 0 ? "pt-4 md:pt-0 md:pl-4" : ""
-                }`}
-              >
-                <span className="text-2xl sm:text-3xl lg:text-4xl font-black text-emerald-400 tracking-tight font-['Outfit'] drop-shadow-[0_0_12px_rgba(16,185,129,0.3)]">
-                  {stat.value}
-                </span>
-                <span className="text-xs sm:text-sm font-medium text-slate-300 mt-1">
-                  {stat.label}
-                </span>
-              </div>
-            ))}
+        {/* ── Floating Stats Bar ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, delay: 0.5 }}
+          className="mt-10"
+        >
+          <div className="glass-stats-bar rounded-2xl px-5 py-4 sm:py-5 border border-slate-200/90 dark:border-white/10 shadow-md">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-5 md:gap-3 divide-y sm:divide-y md:divide-y-0 md:divide-x divide-slate-200 dark:divide-white/10">
+              {stats.map((stat, index) => (
+                <div
+                  key={index}
+                  className={`flex flex-col items-center text-center ${index >= 2 ? "pt-4 sm:pt-4 md:pt-0" : ""} md:px-3`}
+                >
+                  <AnimatedCounter
+                    end={stat.value}
+                    suffix={stat.suffix || ""}
+                    prefix={stat.prefix || ""}
+                    className="text-2xl sm:text-3xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight font-['Outfit']"
+                  />
+                  <span className="text-[11px] sm:text-xs font-semibold text-slate-500 dark:text-slate-400 mt-0.5">
+                    {stat.label}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

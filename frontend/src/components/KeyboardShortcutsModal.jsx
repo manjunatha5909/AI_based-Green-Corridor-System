@@ -22,6 +22,7 @@ function KeyboardShortcutsModal({ isOpen, onClose }) {
 
   const shortcuts = [
     { key: "1 - 5", desc: "Switch navigation views (Command Center, Overview, How It Works, Features, Analytics)" },
+    { key: "Alt + T", desc: "Toggle Dark / Light Theme" },
     { key: "Alt + C", desc: "Open Rapid Way" },
     { key: "Space / P", desc: "Start / Pause Green Corridor Simulation" },
     { key: "Alt + H", desc: "Toggle High Contrast mode (a11y)" },
@@ -35,7 +36,7 @@ function KeyboardShortcutsModal({ isOpen, onClose }) {
   return (
     <AnimatePresence>
       <div 
-        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-md"
         role="dialog"
         aria-modal="true"
         aria-labelledby="shortcuts-title"
@@ -46,26 +47,26 @@ function KeyboardShortcutsModal({ isOpen, onClose }) {
           initial={{ scale: 0.95, opacity: 0, y: 15 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 15 }}
-          className="relative w-full max-w-lg glass-card rounded-2xl p-6 border border-emerald-500/30 shadow-2xl outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+          className="relative w-full max-w-lg bg-white rounded-2xl p-6 border border-slate-200 shadow-2xl outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
         >
-          <div className="flex items-center justify-between pb-4 border-b border-white/10">
-            <div className="flex items-center gap-2.5 text-emerald-400">
+          <div className="flex items-center justify-between pb-4 border-b border-slate-200">
+            <div className="flex items-center gap-2.5 text-emerald-700">
               <Keyboard className="w-5 h-5" aria-hidden="true" />
-              <h2 id="shortcuts-title" className="text-lg font-bold text-white font-['Outfit']">
+              <h2 id="shortcuts-title" className="text-lg font-bold text-slate-900 font-['Outfit']">
                 Accessibility & Keyboard Shortcuts
               </h2>
             </div>
             <button
               onClick={onClose}
               aria-label="Close shortcuts dialog"
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-emerald-400"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
           <div className="py-4 space-y-3">
-            <p className="text-xs text-slate-300">
+            <p className="text-xs text-slate-600 font-medium">
               The AI Green Corridor Command System supports full keyboard navigation and screen-reader shortcuts:
             </p>
 
@@ -73,10 +74,10 @@ function KeyboardShortcutsModal({ isOpen, onClose }) {
               {shortcuts.map((item, idx) => (
                 <li
                   key={idx}
-                  className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 border border-white/5 hover:border-emerald-500/20 text-xs"
+                  className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs shadow-2xs"
                 >
-                  <span className="text-slate-300">{item.desc}</span>
-                  <kbd className="px-2 py-1 rounded bg-slate-800 border border-slate-700 text-emerald-400 font-mono font-bold text-[11px] shadow-inner shrink-0 ml-2">
+                  <span className="text-slate-700 font-medium">{item.desc}</span>
+                  <kbd className="px-2 py-1 rounded-md bg-white border border-slate-200 text-emerald-700 font-mono font-bold text-[11px] shadow-2xs shrink-0 ml-2">
                     {item.key}
                   </kbd>
                 </li>
@@ -84,10 +85,10 @@ function KeyboardShortcutsModal({ isOpen, onClose }) {
             </ul>
           </div>
 
-          <div className="pt-3 border-t border-white/10 flex justify-end">
+          <div className="pt-3 border-t border-slate-200 flex justify-end">
             <button
               onClick={onClose}
-              className="btn-emerald px-5 py-2 rounded-xl text-xs font-bold focus-visible:ring-2 focus-visible:ring-emerald-400"
+              className="btn-emerald px-5 py-2 rounded-xl text-xs font-bold shadow-xs cursor-pointer"
             >
               Got it (Esc)
             </button>
@@ -99,4 +100,3 @@ function KeyboardShortcutsModal({ isOpen, onClose }) {
 }
 
 export default KeyboardShortcutsModal;
-
