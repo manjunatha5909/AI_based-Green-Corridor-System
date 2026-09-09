@@ -36,7 +36,7 @@ function Footer({ setActiveTab, onGetStarted }) {
             </p>
             <Button variant="emerald" size="sm" onClick={onGetStarted} className="rounded-full px-5 gap-2 shadow-xs">
               <Zap className="w-3.5 h-3.5" />
-              Launch Corridor Console
+              Rapid Way
             </Button>
 
             {/* Tech tags */}

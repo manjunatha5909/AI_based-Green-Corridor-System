@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+
+# Node / Vite
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/tmp-native/
+
+# Backend runtime data
+AI-Green-Corridor-System/backend/cache/
+AI-Green-Corridor-System/backend/__pycache__/
+AI-Green-Corridor-System/backend/routes/__pycache__/
+AI-Green-Corridor-System/backend/services/__pycache__/
+
+# Local IDE and OS files
+.vscode/*.code-workspace
+.DS_Store
+Thumbs.db
+*.log

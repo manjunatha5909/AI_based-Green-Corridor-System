@@ -12,23 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
-const BENGALURU_PRESETS = [
-  { name: "MG Road → Victoria Hospital", type: "Critical Trauma", src: "MG Road Metro Station", dst: "Victoria Hospital Trauma Center", dist: "4.8 km", color: "rose" },
-  { name: "Indiranagar → Manipal HAL", type: "Cardiac Emergency", src: "Indiranagar 100ft Road", dst: "Manipal Hospital (Old Airport Rd)", dist: "3.2 km", color: "amber" },
-  { name: "Koramangala → St. John's", type: "Organ Transit", src: "Koramangala 5th Block", dst: "St. John's Medical College Hospital", dist: "2.1 km", color: "violet" },
-  { name: "Electronic City → Narayana", type: "Pediatric Emergency", src: "Electronic City Phase 1", dst: "Narayana Health City (Mazumdar Shaw)", dist: "5.4 km", color: "sky" },
-  { name: "Malleshwaram → Fortis", type: "Stroke Alert", src: "Malleshwaram 8th Cross", dst: "Fortis Hospital (Cunningham Road)", dist: "3.8 km", color: "amber" },
-  { name: "Jayanagar → NIMHANS", type: "Neurotrauma", src: "Jayanagar 4th Block", dst: "NIMHANS Emergency Brain & Trauma Care", dist: "2.6 km", color: "emerald" },
-];
-
-const TYPE_COLORS = {
-  rose: "border-rose-200 bg-rose-50 text-rose-800 font-semibold",
-  amber: "border-amber-200 bg-amber-50 text-amber-800 font-semibold",
-  violet: "border-purple-200 bg-purple-50 text-purple-800 font-semibold",
-  sky: "border-sky-200 bg-sky-50 text-sky-800 font-semibold",
-  emerald: "border-emerald-200 bg-emerald-50 text-emerald-800 font-semibold",
-};
-
 function CorridorConsole({ isOpen, onClose, onRouteCalculated, onSignalUpdate, onStepChange, currentRoute = null, activeSignalIndex = -1 }) {
   const { announce, playBeep, speak } = useAccessibility();
 
@@ -63,14 +46,6 @@ function CorridorConsole({ isOpen, onClose, onRouteCalculated, onSignalUpdate, o
     if (isOpen) { window.addEventListener("keydown", handleKeyDown); modalRef.current?.focus(); }
     return () => { window.removeEventListener("keydown", handleKeyDown); if (autoRunTimerRef.current) clearInterval(autoRunTimerRef.current); };
   }, [isOpen, handleClose]);
-
-  const handleApplyPreset = (preset) => {
-    setSource(preset.src);
-    setDestination(preset.dst);
-    setStatusMessage(`Selected: ${preset.name}`);
-    announce(`Selected preset ${preset.name}`);
-    playBeep("click");
-  };
 
   const handleCalculateRoute = async (e) => {
     if (e) e.preventDefault();
@@ -266,36 +241,6 @@ function CorridorConsole({ isOpen, onClose, onRouteCalculated, onSignalUpdate, o
           <div className="p-6 sm:p-8 space-y-6">
             {activeTab === "dispatch" && (
               <>
-                {/* Quick Presets */}
-                <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <Hospital className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">Quick Emergency Routes</h3>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-                    {BENGALURU_PRESETS.map((preset, idx) => (
-                      <motion.button
-                        key={idx}
-                        whileHover={{ scale: 1.02, y: -1 }}
-                        whileTap={{ scale: 0.98 }}
-                        type="button"
-                        onClick={() => handleApplyPreset(preset)}
-                        className="p-3.5 text-left rounded-xl bg-slate-50 dark:bg-white/5 border border-slate-200/80 dark:border-white/8 hover:border-emerald-300 dark:hover:border-emerald-500/40 hover:bg-emerald-50/40 dark:hover:bg-emerald-500/10 transition-all group cursor-pointer shadow-2xs"
-                      >
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors truncate">
-                            {preset.name}
-                          </span>
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-white/10 ml-2 shrink-0">{preset.dist}</span>
-                        </div>
-                        <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full border ${TYPE_COLORS[preset.color]}`}>
-                          {preset.type}
-                        </span>
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
-
                 {/* Route Form */}
                 <form onSubmit={handleCalculateRoute} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-end">

@@ -6,7 +6,7 @@ import HowItWorksSection from "./components/HowItWorksSection";
 import FeaturesSection from "./components/FeaturesSection";
 import AboutSection from "./components/AboutSection";
 import AnalyticsSection from "./components/AnalyticsSection";
-import CorridorConsole from "./components/CorridorConsole";
+import RapidWayModal from "./components/RapidWayModal";
 import AccessibilityToolbar from "./components/AccessibilityToolbar";
 import Dashboard from "./pages/Dashboard";
 import Footer from "./components/Footer";
@@ -14,7 +14,8 @@ import { useAccessibility } from "./context/useAccessibility";
 
 function App() {
   const [activeTab, setActiveTab] = useState("home"); // Default to Overview
-  const [isConsoleOpen, setIsConsoleOpen] = useState(false);
+  const [isRapidWayOpen, setIsRapidWayOpen] = useState(false);
+  const [rapidWayRequest, setRapidWayRequest] = useState(null);
   const { setHighContrast, setSoundEnabled, setVoiceAlerts, playBeep, theme, toggleTheme } = useAccessibility();
 
   const liveGpsRef = useRef(null);
@@ -55,7 +56,7 @@ function App() {
         toggleTheme();
       } else if (e.altKey && (e.key === "c" || e.key === "C")) {
         e.preventDefault();
-        setIsConsoleOpen((prev) => !prev);
+        setIsRapidWayOpen((prev) => !prev);
       } else if (e.altKey && (e.key === "h" || e.key === "H")) {
         e.preventDefault();
         setHighContrast((prev) => !prev);
@@ -82,9 +83,16 @@ function App() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [setHighContrast, setSoundEnabled, setVoiceAlerts, handleTabChange, toggleTheme]);
 
-  const handleOpenConsole = () => {
-    setIsConsoleOpen(true);
+  const handleOpenRapidWay = () => {
+    setIsRapidWayOpen(true);
     playBeep("click");
+  };
+
+  const handleStartRapidWay = (request) => {
+    setRapidWayRequest({ ...request, id: Date.now() });
+    setIsRapidWayOpen(false);
+    setActiveTab("command");
+    playBeep("green");
   };
 
   return (
@@ -97,19 +105,19 @@ function App() {
       <Navbar
         activeTab={activeTab}
         setActiveTab={handleTabChange}
-        onGetStarted={handleOpenConsole}
+        onGetStarted={handleOpenRapidWay}
       />
 
       {/* Main Content Area with A11y Landmark */}
       <main id="main-content" tabIndex={-1} className="flex-1 outline-none">
         {activeTab === "command" ? (
           /* Live Interactive Command Center with Leaflet Map & Telemetry HUD */
-          <Dashboard />
+          <Dashboard rapidWayRequest={rapidWayRequest} onOpenRapidWay={handleOpenRapidWay} />
         ) : (
           /* Landing & System Tour View */
           <>
             <Hero
-              onCreateCorridor={handleOpenConsole}
+              onOpenRapidWay={handleOpenRapidWay}
               onOpenCommandHub={() => handleTabChange("command")}
             />
 
@@ -118,7 +126,7 @@ function App() {
             </div>
 
             <div ref={howItWorksRef} id="how-it-works">
-              <HowItWorksSection onCreateCorridor={handleOpenConsole} />
+              <HowItWorksSection onOpenRapidWay={handleOpenRapidWay} />
             </div>
 
             <div ref={featuresRef} id="features">
@@ -139,16 +147,16 @@ function App() {
       {/* Footer */}
       <Footer
         setActiveTab={handleTabChange}
-        onGetStarted={handleOpenConsole}
+        onGetStarted={handleOpenRapidWay}
       />
 
       {/* Accessibility Toolbar */}
       <AccessibilityToolbar />
 
-      {/* Emergency Dispatch Console Modal */}
-      <CorridorConsole
-        isOpen={isConsoleOpen}
-        onClose={() => setIsConsoleOpen(false)}
+      <RapidWayModal
+        isOpen={isRapidWayOpen}
+        onClose={() => setIsRapidWayOpen(false)}
+        onStart={handleStartRapidWay}
       />
     </div>
   );

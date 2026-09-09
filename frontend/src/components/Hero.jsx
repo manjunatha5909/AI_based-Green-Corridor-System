@@ -33,7 +33,7 @@ function Particle({ style, duration, delay }) {
   );
 }
 
-function Hero({ onCreateCorridor, onOpenCommandHub }) {
+function Hero({ onOpenRapidWay, onOpenCommandHub }) {
   const features = [
     { icon: Cpu, title: "AI Graph Routing", subtitle: "OSRM & Dijkstra" },
     { icon: Navigation2, title: "Live Telemetry", subtitle: "Real-time Heading" },
@@ -136,11 +136,11 @@ function Hero({ onCreateCorridor, onOpenCommandHub }) {
             <Button
               variant="emerald"
               size="xl"
-              onClick={onCreateCorridor}
+              onClick={onOpenRapidWay}
               className="rounded-full px-8 group shadow-md hover:shadow-lg"
             >
               <Zap className="w-5 h-5" />
-              Launch Rapid Green Wave
+              Rapid Way
               <HiArrowRight className="w-5 h-5 group-hover:translate-x-1.5 transition-transform duration-300" aria-hidden="true" />
             </Button>
 

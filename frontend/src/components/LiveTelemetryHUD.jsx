@@ -14,6 +14,7 @@ function LiveTelemetryHUD({
   nextSignal = null,
   bearing = 0,
   isRunning = false,
+  rapidWayActive = false,
 }) {
   const clearancePercent =
     totalSignals > 0 ? Math.round((clearedSignals / totalSignals) * 100) : 0;
@@ -66,8 +67,8 @@ function LiveTelemetryHUD({
               Live Emergency GPS Stream
             </h3>
           </div>
-          <Badge variant={isRunning ? "emerald" : "outline"} className="text-[11px] font-bold tracking-wide">
-            {isRunning ? "● CORRIDOR IN TRANSIT" : "STANDBY / READY"}
+          <Badge variant={rapidWayActive || isRunning ? "emerald" : "outline"} className="text-[11px] font-bold tracking-wide">
+            {isRunning ? "● CORRIDOR IN TRANSIT" : rapidWayActive ? "● RAPID WAY ACTIVE" : "STANDBY / READY"}
           </Badge>
         </div>
 

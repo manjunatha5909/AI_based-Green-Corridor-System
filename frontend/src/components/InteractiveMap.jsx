@@ -113,6 +113,7 @@ function InteractiveMap({
   onPickCoordinate = null,
   pickMode = null,
   isAutoRunning = false,
+  hideLiveOverlays = false,
   height = "540px",
 }) {
   const { highContrast, theme } = useAccessibility();
@@ -132,17 +133,24 @@ function InteractiveMap({
   const defaultCenter = [12.9716, 77.5946];
 
   const tileUrl = useMemo(() => {
-    if (highContrast) {
-      return "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
-    }
+    const cartoApiKey = import.meta.env.VITE_CARTO_API_KEY;
+    const apiKeyParam = cartoApiKey ? `?api_key=${encodeURIComponent(cartoApiKey)}` : "";
+
     if (effectiveMapStyle === "dark") {
+      if (cartoApiKey) {
+        return `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png${apiKeyParam}`;
+      }
       return "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
     }
-    if (effectiveMapStyle === "voyager") {
-      return "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+
+    // If Carto API key configured, use Carto Voyager without watermark
+    if (cartoApiKey) {
+      return `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png${apiKeyParam}`;
     }
+
+    // Default clean OpenStreetMap raster tiles (no API key required, zero watermark)
     return "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
-  }, [highContrast, effectiveMapStyle]);
+  }, [effectiveMapStyle]);
 
   // Origin Marker Icon
   const sourceIcon = useMemo(() => {
@@ -248,10 +256,19 @@ function InteractiveMap({
     });
   }, [ambulanceBearing]);
 
-  const createSignalIcon = (isGreen, index) => {
-    const bgColor = isGreen ? "#10B981" : "#EF4444";
-    const glowColor = isGreen ? "rgba(16, 185, 129, 0.6)" : "rgba(239, 68, 68, 0.4)";
+  const createSignalIcon = (signalState, index) => {
+    const isGreen = signalState === "GREEN" || signalState === "CLEARED" || signalState === true;
+    const isPrepare = signalState === "PREPARE";
+
+    const bgColor = isGreen ? "#10B981" : isPrepare ? "#F59E0B" : "#EF4444";
+    const glowColor = isGreen
+      ? "rgba(16, 185, 129, 0.6)"
+      : isPrepare
+      ? "rgba(245, 158, 11, 0.6)"
+      : "rgba(239, 68, 68, 0.4)";
     const label = index + 1;
+    const textStatus = isGreen ? "● CLEARED" : isPrepare ? "● PREPARE" : "● RED";
+    const textColor = isGreen ? "#059669" : isPrepare ? "#D97706" : "#DC2626";
 
     return L.divIcon({
       className: "custom-signal-marker",
@@ -275,6 +292,20 @@ function InteractiveMap({
               border: 2.5px solid #10B981;
               box-shadow: 0 0 14px rgba(16, 185, 129, 0.8);
               animation: ping 1.4s cubic-bezier(0, 0, 0.2, 1) infinite;
+              pointer-events: none;
+            "></div>
+          ` : isPrepare ? `
+            <div style="
+              position: absolute;
+              top: -3px;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 38px;
+              height: 38px;
+              border-radius: 50%;
+              border: 2.5px solid #F59E0B;
+              box-shadow: 0 0 14px rgba(245, 158, 11, 0.8);
+              animation: ping 1.2s cubic-bezier(0, 0, 0.2, 1) infinite;
               pointer-events: none;
             "></div>
           ` : ""}
@@ -306,14 +337,14 @@ function InteractiveMap({
             background: #FFFFFF;
             border: 1px solid rgba(226, 232, 240, 0.9);
             border-radius: 4px;
-            color: ${isGreen ? "#059669" : "#DC2626"};
+            color: ${textColor};
             font-size: 9px;
             font-weight: 800;
             white-space: nowrap;
             box-shadow: 0 2px 6px rgba(0,0,0,0.08);
             transition: all 0.3s ease;
           ">
-            ${isGreen ? "● GREEN" : "● RED"}
+            ${textStatus}
           </span>
         </div>
       `,
@@ -522,7 +553,9 @@ function InteractiveMap({
                 <div className="space-y-2">
                   {trafficSignals.map((sig, sIdx) => {
                     const sState = signalStates[sIdx];
-                    const isCleared = sState?.state === "GREEN" || sIdx <= activeSignalIndex;
+                    const stateName = sState?.state || "RED";
+                    const isCleared = stateName === "GREEN" || stateName === "CLEARED";
+                    const isPrepare = stateName === "PREPARE";
 
                     return (
                       <div
@@ -530,6 +563,8 @@ function InteractiveMap({
                         className={`p-2.5 rounded-xl border flex items-center justify-between gap-2.5 text-xs transition-all ${
                           isCleared
                             ? "bg-emerald-50/70 dark:bg-emerald-500/10 border-emerald-300 dark:border-emerald-500/30"
+                            : isPrepare
+                            ? "bg-amber-50/70 dark:bg-amber-500/10 border-amber-300 dark:border-amber-500/30"
                             : "bg-slate-50 dark:bg-white/5 border-slate-200 dark:border-white/10"
                         }`}
                       >
@@ -537,7 +572,11 @@ function InteractiveMap({
                           <div className="flex items-center gap-1.5">
                             <span
                               className={`w-2 h-2 rounded-full ${
-                                isCleared ? "bg-emerald-500 animate-pulse" : "bg-rose-500"
+                                isCleared
+                                  ? "bg-emerald-500 animate-pulse"
+                                  : isPrepare
+                                  ? "bg-amber-500 animate-ping"
+                                  : "bg-rose-500"
                               }`}
                             />
                             <p className="font-bold text-slate-900 dark:text-white truncate">
@@ -554,10 +593,12 @@ function InteractiveMap({
                             className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                               isCleared
                                 ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300"
+                                : isPrepare
+                                ? "bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300"
                                 : "bg-rose-100 dark:bg-rose-500/20 text-rose-800 dark:text-rose-300"
                             }`}
                           >
-                            {isCleared ? "GREEN" : "RED"}
+                            {isCleared ? "CLEARED" : isPrepare ? "PREPARE" : "RED"}
                           </span>
                           {onSignalOverride && (
                             <button
@@ -737,14 +778,17 @@ function InteractiveMap({
           {/* Traffic Signal Markers */}
           {trafficSignals.map((signal, index) => {
             const sigState = signalStates[index];
-            const isGreen = sigState?.state === "GREEN";
+            const currentSignalState = sigState?.state || "RED";
+            const isGreen = currentSignalState === "GREEN" || currentSignalState === "CLEARED";
+            const isPrepare = currentSignalState === "PREPARE";
 
             return (
               <Marker
                 key={signal.id || index}
                 position={[signal.lat, signal.lon]}
-                icon={createSignalIcon(isGreen, index)}
+                icon={createSignalIcon(currentSignalState, index)}
               >
+                {showJunctionLabels && (
                   <Tooltip
                     permanent
                     direction="top"
@@ -752,7 +796,7 @@ function InteractiveMap({
                     className="custom-junction-tooltip"
                   >
                     <span>
-                      #{index + 1} {signal.name} • {isGreen ? "🟢 GREEN" : "🔴 RED"}
+                      #{index + 1} {signal.name} • {isGreen ? "🟢 CLEARED" : isPrepare ? "🟡 PREPARE" : "🔴 RED"}
                     </span>
                   </Tooltip>
                 )}
@@ -764,10 +808,12 @@ function InteractiveMap({
                         className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                           isGreen
                             ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                            : isPrepare
+                            ? "bg-amber-50 text-amber-700 border border-amber-200"
                             : "bg-rose-50 text-rose-700 border border-rose-200"
                         }`}
                       >
-                        {isGreen ? "GREEN WAVE" : "RED (STOP)"}
+                        {isGreen ? "GREEN WAVE (CLEARED)" : isPrepare ? "PREPARING CORRIDOR" : "RED (STOP)"}
                       </span>
                     </div>
 

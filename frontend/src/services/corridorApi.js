@@ -290,6 +290,8 @@ export async function createRoute(source, destination) {
   let signalStates = [];
   let bearings = [];
   let isBackendRoute = false;
+  let tripId = null;
+  let ambulanceId = "AMB-BLR-108";
 
   // 1. Attempt Route Calculation from Flask Backend
   try {
@@ -314,6 +316,8 @@ export async function createRoute(source, destination) {
         distanceKm = data.distance_km || 0.0;
         etaMinutes = data.eta_minutes || Math.max(2, Math.round((distanceKm / 60) * 60));
         isBackendRoute = true;
+        tripId = data.trip_id || null;
+        ambulanceId = data.ambulance_id || "AMB-BLR-108";
         lastBackendStatus.online = true;
 
         // Compute forward bearings for vehicle rotation
@@ -413,12 +417,16 @@ export async function createRoute(source, destination) {
   clientState.current_speed_kmh = 0.0;
   clientState.current_street = steps[0]?.street || "Origin Point";
   clientState.next_maneuver = steps[0]?.instruction || null;
-  clientState.start_time = null;
+  clientState.trip_id = tripId;
+  clientState.ambulance_id = ambulanceId;
+  clientState.start_time = Date.now();
   clientState.last_updated = Date.now();
   clientState.backend_connected = isBackendRoute;
   clientState.data_source = isBackendRoute ? "Flask Backend (OSMNx + TomTom Traffic)" : "In-Browser Engine (OSRM)";
 
   return {
+    trip_id: tripId,
+    ambulance_id: ambulanceId,
     distance_km: distanceKm,
     eta_minutes: etaMinutes,
     route: coordinates,
@@ -431,6 +439,17 @@ export async function createRoute(source, destination) {
     backend_connected: isBackendRoute,
     data_source: clientState.data_source,
   };
+}
+
+export async function updateLocation(location) {
+  const response = await fetch(`${BACKEND_URL}/location/update`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(location),
+  });
+  const data = await response.json();
+  if (!response.ok) throw new Error(data.message || "Location update failed.");
+  return data;
 }
 
 export async function startCorridor() {
@@ -615,4 +634,79 @@ export async function resetCorridorApi() {
     signal_states: clientState.signal_states,
     backend_connected: lastBackendStatus.online,
   };
+}
+
+export async function endTrip() {
+  clientState.active = false;
+  clientState.active_signal_index = -1;
+  clientState.current_speed_kmh = 0.0;
+
+  try {
+    const res = await fetch(`${BACKEND_URL}/route/end`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({}),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    } else {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.message || `Failed to end trip (Status ${res.status})`);
+    }
+  } catch (err) {
+    console.warn("Backend endTrip call error:", err.message);
+    const durationSec = clientState.start_time ? Math.round((Date.now() - clientState.start_time) / 1000) : 0;
+    const mins = Math.floor(durationSec / 60);
+    const secs = durationSec % 60;
+    const clearedCount = clientState.signal_states.filter((s) => s.state === "GREEN" || s.state === "CLEARED").length;
+
+    return {
+      status: "success",
+      message: "Trip ended successfully",
+      report: {
+        trip_id: clientState.trip_id || `TRIP-${Date.now()}`,
+        ambulance_id: clientState.ambulance_id || "AMB-BLR-108",
+        start_location: clientState.source?.name || "N/A",
+        destination: clientState.destination?.name || "N/A",
+        distance: clientState.distance_km,
+        planned_eta: clientState.eta_minutes,
+        actual_duration: `${mins}m ${secs}s`,
+        traffic_adjusted_status: "Optimal",
+        signals_monitored: clientState.traffic_signals?.length || 0,
+        signals_cleared: clearedCount,
+        delays: null,
+        route_deviation: false,
+        start_time: clientState.start_time ? new Date(clientState.start_time).toISOString() : new Date().toISOString(),
+        end_time: new Date().toISOString(),
+        trip_status: "COMPLETED",
+      },
+    };
+  }
+}
+
+export async function getReports() {
+  try {
+    const res = await fetch(`${BACKEND_URL}/reports`);
+    if (res.ok) {
+      const data = await res.json();
+      return data.reports || [];
+    }
+  } catch (err) {
+    console.warn("Failed to fetch reports:", err.message);
+  }
+  return [];
+}
+
+export async function getReportById(tripId) {
+  try {
+    const res = await fetch(`${BACKEND_URL}/reports/${tripId}`);
+    if (res.ok) {
+      const data = await res.json();
+      return data.report || null;
+    }
+  } catch (err) {
+    console.warn(`Failed to fetch report ${tripId}:`, err.message);
+  }
+  return null;
 }

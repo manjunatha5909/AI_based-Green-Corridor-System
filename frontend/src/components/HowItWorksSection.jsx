@@ -83,7 +83,7 @@ function StepCard({ step, index }) {
   );
 }
 
-function HowItWorksSection({ onCreateCorridor }) {
+function HowItWorksSection({ onOpenRapidWay }) {
   const titleRef = useRef(null);
   const titleInView = useInView(titleRef, { once: true });
 
@@ -128,7 +128,7 @@ function HowItWorksSection({ onCreateCorridor }) {
           transition={{ duration: 0.6, delay: 0.5 }}
           className="flex flex-col sm:flex-row items-center justify-center gap-4"
         >
-          <Button variant="emerald" size="lg" onClick={onCreateCorridor} className="rounded-full px-8 group gap-2 shadow-xs">
+          <Button variant="emerald" size="lg" onClick={onOpenRapidWay} className="rounded-full px-8 group gap-2 shadow-xs">
             <span>See it in Action</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Button>
