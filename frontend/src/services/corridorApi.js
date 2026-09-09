@@ -10,7 +10,12 @@ import { resolveLocation, geocodeLocation } from "../utils/locations";
  * - Automatic graceful fallback to in-browser OSRM engine if backend is temporarily offline
  */
 
-export const BACKEND_URL = "http://127.0.0.1:5000";
+export const BACKEND_URL =
+  import.meta.env.VITE_API_URL !== undefined && import.meta.env.VITE_API_URL !== ""
+    ? import.meta.env.VITE_API_URL.replace(/\/+$/, "")
+    : (typeof window !== "undefined" && window.location.port !== "5173"
+        ? window.location.origin
+        : "http://127.0.0.1:5000");
 
 let lastBackendStatus = { online: false, lastChecked: 0 };
 

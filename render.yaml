@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: green-corridor-system
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    region: singapore
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: TOMTOM_API_KEY
+        sync: false
+      - key: VITE_CARTO_API_KEY
+        sync: false
+

@@ -1,0 +1,16 @@
+services:
+  green-corridor:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: green-corridor-system
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - TOMTOM_API_KEY=${TOMTOM_API_KEY:-JD893UXVBGPayTX5Xdl5p1lXbxAKx41W}
+      - VITE_CARTO_API_KEY=${VITE_CARTO_API_KEY:-}
+    restart: unless-stopped
+    volumes:
+      - ./AI-Green-Corridor-System/backend/data:/app/AI-Green-Corridor-System/backend/data
+
