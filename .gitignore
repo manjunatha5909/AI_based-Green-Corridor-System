@@ -15,9 +15,19 @@ frontend/tmp-native/
 
 # Backend runtime data
 AI-Green-Corridor-System/backend/cache/
+AI-Green-Corridor-System/backend/data/
+AI-Green-Corridor-System/backend/dist/
 AI-Green-Corridor-System/backend/__pycache__/
 AI-Green-Corridor-System/backend/routes/__pycache__/
 AI-Green-Corridor-System/backend/services/__pycache__/
+AI-Green-Corridor-System/cache/
+AI-Green-Corridor-System/frontend/
+AI-Green-Corridor-System/mappls-test/
+AI-Green-Corridor-System/.gitignore
+AI-Green-Corridor-System/README.md
+AI-Green-Corridor-System/COLOR_INVENTORY.md
+AI-Green-Corridor-System/backend/production_requirements.txt
+AI-Green-Corridor-System/backend/test_*.py
 
 # Local IDE and OS files
 .vscode/*.code-workspace
