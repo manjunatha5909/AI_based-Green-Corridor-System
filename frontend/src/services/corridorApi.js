@@ -23,7 +23,7 @@ export async function checkBackendHealth() {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 2500);
-    const res = await fetch(`${BACKEND_URL}/`, {
+    const res = await fetch(`${BACKEND_URL}/health`, {
       method: "GET",
       signal: controller.signal,
     });

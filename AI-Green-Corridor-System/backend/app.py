@@ -37,7 +37,7 @@ if FRONTEND_DIST:
     @app.route("/<path:path>")
     def serve_frontend(path):
         # Don't intercept API endpoints
-        if path in ("route", "reports") or path.startswith(("route/", "reports/", "location/", "corridor/", "activate-signal/")):
+        if path in ("health", "route", "reports") or path.startswith(("route/", "reports/", "location/", "corridor/", "activate-signal/")):
             return {"status": "error", "message": "Not Found"}, 404
         if path != "" and os.path.exists(os.path.join(FRONTEND_DIST, path)):
             return send_from_directory(FRONTEND_DIST, path)
