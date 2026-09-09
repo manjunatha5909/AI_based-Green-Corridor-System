@@ -7,6 +7,7 @@ Compatible with Gunicorn, Render, Railway, Docker, and direct python app.py exec
 
 import sys
 import os
+import importlib.util
 
 # Point to backend directory
 BACKEND_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "AI-Green-Corridor-System", "backend")
@@ -16,7 +17,14 @@ if os.path.exists(BACKEND_DIR):
         sys.path.insert(0, BACKEND_DIR)
     os.chdir(BACKEND_DIR)
 
-from app import app
+backend_app_path = os.path.join(BACKEND_DIR, "app.py")
+backend_spec = importlib.util.spec_from_file_location("green_corridor_backend_app", backend_app_path)
+if backend_spec is None or backend_spec.loader is None:
+    raise ImportError(f"Unable to load backend application from {backend_app_path}")
+backend_module = importlib.util.module_from_spec(backend_spec)
+sys.modules[backend_spec.name] = backend_module
+backend_spec.loader.exec_module(backend_module)
+app = backend_module.app
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

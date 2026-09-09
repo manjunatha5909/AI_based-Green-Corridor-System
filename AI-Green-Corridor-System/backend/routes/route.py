@@ -1,5 +1,6 @@
 import time
 import uuid
+import threading
 from datetime import datetime, timezone
 import concurrent.futures
 import networkx as nx
@@ -46,7 +47,17 @@ from services.gps_tracking_service import process_location_update
 
 route_bp = Blueprint("route", __name__)
 
-graph = load_bengaluru_graph()
+graph = None
+graph_lock = threading.Lock()
+
+
+def get_graph():
+    global graph
+    if graph is None:
+        with graph_lock:
+            if graph is None:
+                graph = load_bengaluru_graph()
+    return graph
 
 
 @route_bp.route("/route", methods=["POST"])
@@ -57,6 +68,7 @@ def find_route():
     if not data or "source" not in data or "destination" not in data:
         return jsonify({"status": "error", "message": "source and destination required"}), 400
 
+    graph = get_graph()
     source = data["source"]
     destination = data["destination"]
 
